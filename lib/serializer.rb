@@ -15,8 +15,8 @@ module Serializer
 
     def deserialize
         File.open('saved_games/saves.yaml', 'r') do |f|
-            loaded_game = @@serializer.load(f)
-            loaded_game.guess
+            loaded_game = @@serializer.safe_load(f, permitted_classes: [Hangman])
+            loaded_game.display_correct_guess
         end
     end
 end

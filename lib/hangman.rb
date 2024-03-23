@@ -59,9 +59,10 @@ class Hangman
             puts "Would you like to load a saved game? Y/N"
             if gets.chomp == 'y'
                 load_game
+            else
+                display_correct_guess
             end
         end
-        display_correct_guess
     end
 
     def save_game

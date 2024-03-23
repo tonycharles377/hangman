@@ -4,18 +4,21 @@ class Hangman
     #mixin
     include Serializer
 
-    @@number_of_gueses = 0
     @@words = File.readlines('google-10000-english-no-swears.txt').map!(&:chomp)
 
     def initialize
+        @number_of_guesses = 0
         @word = rand_word(@@words)
-        @@display = @word.split('').map{|char| char = '_'}
+        @list_of_char_guessed = []
+        @display = @word.split('').map{|char| char = '_'}
     end
 
     def guess
-        @@number_of_gueses += 1
-        puts "You have #{15 - @@number_of_gueses} live(s) remaining!\nGuess a letter"
-        @char = gets.chomp  
+        @number_of_guesses += 1
+        @lives_remaining = 14 - @number_of_guesses
+        puts "You have #{@lives_remaining} live(s) remaining!\nGuess a letter"
+        @char = gets.chomp
+        @list_of_char_guessed << @char  
     end
 
     def display_correct_guess
@@ -23,17 +26,17 @@ class Hangman
             guess()
             @word.split('').each_with_index do |ichar, i|
                 if ichar == @char.downcase
-                    @@display[i] = ichar
+                    @display[i] = ichar
                 end
             end
-            p @@display.join(' ')
+            p @display.join(' ')
 
-            puts "Do you want to save game? Y/N"
+            puts "Do you want to save and exit game? Y/N"
             if gets.chomp == "y"
                 save_game
             end
 
-            if @word.split('') == @@display
+            if @word.split('') == @display
                 puts "You win!"
             else
                 display_correct_guess()
@@ -45,25 +48,32 @@ class Hangman
     end
 
     def game_over?
-        @@number_of_gueses > 13
+        @number_of_guesses > 13
     end
 
     #game loop
     def play
+        puts "Welcome to hangman game!"
+
+        if saved_games?
+            puts "Would you like to load a saved game? Y/N"
+            if gets.chomp == 'y'
+                load_game
+            end
+        end
         display_correct_guess
     end
 
     def save_game
-
-        Dir.mkdir('saved_games') unless Dir.exist?('saved_games')
-
-        File.open('saved_games/saves.yaml', 'w') do |file|
-            file.puts serialize
-        end
+        serialize
     end
 
     def load_game
-        
+        deserialize
+    end
+
+    def saved_games?
+        Dir.exist?('saved_games') && Dir.entries('saved_games').length >= 1
     end
 
     private

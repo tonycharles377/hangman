@@ -4,20 +4,19 @@ module Serializer
     @@serializer = YAML
 
     def serialize
-        obj = {}
+        Dir.mkdir('saved_games') unless Dir.exist?('saved_games')
 
-        instance_variables.map do |var|
-            obj[var] = instance_variable_get(var)
+        file = File.open('saved_games/saves.yaml', 'w') do |f|
+            @@serializer.dump(self, f)
         end
-
-        @@serializer.dump obj
+        file.close
+        exit
     end
 
-    def deserialize(string)
-        obj = @@serialize.parse(string)
-
-        obj.keys.each do |key|
-            instance_variable_set(key, obj[key])
+    def deserialize
+        File.open('saved_games/saves.yaml', 'r') do |f|
+            loaded_game = @@serializer.load(f)
+            loaded_game.guess
         end
     end
 end

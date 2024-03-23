@@ -1,3 +1,25 @@
----
-:@word: village
-:@char: e
+--- !ruby/object:Hangman
+number_of_guesses: 11
+word: mixture
+list_of_char_guessed:
+- a
+- e
+- e
+- i
+- d
+- p
+- d
+- "y"
+- s
+- g
+- f
+display:
+- _
+- i
+- _
+- _
+- _
+- _
+- e
+lives_remaining: 3
+char: f
